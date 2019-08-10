@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.GoodsDao">
+
+<!-- 模糊查询，用关键字查询商品 -->
+  <select id="selectGoodsByKey" parameterType="String" resultType="com.po.Goods">
+     select gt.* ,gy.typename from goodstable gt ,goodstype gy where gt.goodstype_id=gy.id and gt.gname like concat('%',#{key},'%') 
+  </select>
+  
+  <select id="selectGoodsServer" resultType="com.po.Goods" parameterType="Integer">
+      select * from goodstable limit #{pageSize},#{pageIndex}
+  </select>
+  <!-- 用类型查询商品 -->
+  <select id="selectGoodsByType" parameterType="Integer" resultType="com.po.Goods">
+    select * from goodstable where goodstype_id=#{goodstype_id} limit 8
+  </select>
+  
+  <!-- 用id查询商品 -->
+  <select id="selectGoodsById" parameterType="Integer" resultType="com.po.Goods">
+    select * from goodstable where id=#{id}
+  </select>
+   
+   <!-- 查询所有商品 -->
+  <select id="selectAllGoods" resultType="com.po.Goods">
+     select * from goodstable
+  </select>
+  
+  <!-- 添加商品 -->
+  <insert id="addAGoods" parameterType="com.po.Goods">
+    insert into goodstable(id,gname,goprice,gnprice,gstore,gpic,gdescribe,goodstype_id)
+    values(null,#{gname},#{goprice},#{gnprice},#{gstore},#{gpic},#{gdescribe},#{goodstype_id})
+  </insert>
+  
+  <!-- 删除商品 -->
+  <delete id="deleteAGoods" parameterType="Integer">
+     delete from goodstable where id=#{id}
+  </delete>
+  
+  <!-- 修改商品信息 -->
+  <update id="updateAGoods" parameterType="com.po.Goods">
+    update goodstable set gname=#{gname},goprice=#{goprice},gnprice=#{gnprice},gstore=#{gstore}
+    ,gpic=#{gpic},gdescribe=#{gdescribe},goodstype_id=#{goodstype_id} where id=#{id}
+  </update>
+  
+
+</mapper>

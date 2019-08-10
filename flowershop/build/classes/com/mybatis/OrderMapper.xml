@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.OrderDao">
+
+  <!-- 根据用户id查询订单 -->
+  <select id="myOrders" parameterType="Integer" resultType="com.po.Order">
+    select * from orderbasetable
+  </select>
+  
+  <!--添加订单
+  <insert id="addOrder" parameterType="com.po.Order">
+    insert into orderbasetable(id,usertable_id,amount,status,orderdate)
+    values(null,#{usertable_id},#{amount},0,now())
+  </insert>   -->
+  <insert id="addOrder" parameterType="com.po.Order" keyProperty="id" useGeneratedKeys="true">
+		insert into orderbasetable (usertable_id, amount, status, orderdate) values (#{usertable_id}, #{amount}, 0, now())
+	</insert>
+  
+  <!-- 添加订单详情 -->
+  <insert id="addOrderDetail" parameterType="map">
+   insert into ORDERDETAIL (orderbasetable_id, goodstable_id, SHOPPINGNUM) select #{ordersn}, goodstable_id, SHOPPINGNUM from CARTTABLE where usertable_id = #{uid}
+  </insert>
+  
+  <!-- 查询购买数量用于更新商品库存 -->
+  <select id="selectGoodsShop" parameterType="Integer" resultType="map">
+     select shoppingnum gshoppingnum, goodstable_id gid from carttable where usertable_id=#{id}
+  </select>
+  
+  <!-- 更新商品库存 -->
+  <update id="updateStore" parameterType="map">
+     update goodstable set gstore=gstore-#{gshoppingnum} where id=#{gid}
+  </update>
+  
+  <!-- 清空购物车 -->
+  <delete id="clearCart" parameterType="Integer">
+     delete from carttable where usertable_id=#{id}
+  </delete>
+  
+  <!-- 更新订单状态，支付订单 -->
+  <update id="updateStatus" parameterType="Integer">
+    update orderbasetable set status=1 where id=#{id}
+  </update>
+  
+  <!-- 查询所有订单 -->
+  <select id="selectAllOrder" resultType="com.po.Order">
+    select * from orderbasetable
+  </select>
+  
+   <!-- 根据订单id查询订单 -->
+  <select id="selectAOrder" parameterType="Integer" resultType="com.po.Order">
+    select * from orderbasetable where id=#{id}
+  </select>
+  
+  <!-- 删除订单 -->
+  <delete id="deleteAOrder" parameterType="Integer">
+      delete from orderbasetable where id=#{id}
+  </delete>
+  
+  <!-- 更新订单信息 -->
+  <update id="updateAOrder" parameterType="com.po.Order">
+     update orderbasetable set usertable_id=#{usertable_id},amount=#{amount},status=#{status},orderdate=#{orderdate}
+  </update>
+</mapper>
